@@ -1,15 +1,12 @@
 /* Bell & Lyons — iMessage mobile chat JS overrides
-   Product pages only — Deployed by Viktor 2026-04-17 */
+   Product pages only — CSS-only layout + JS keyboard handling
+   Deployed by Viktor 2026-04-17 */
 (function() {
-    var path = window.location.pathname;
-    while (path.length > 1 && path.charAt(path.length - 1) === '/') { path = path.slice(0, -1); }
-    if (path === '' || path === '/' || path === '/home') return;
-
-    document.documentElement.classList.add('bl-imessage-active');
-
     function init() {
         if (window.innerWidth > 768) return;
-        document.body.classList.add('bl-imessage-active');
+        var body = document.body;
+        if (!body || body.classList.contains('home') || !body.hasAttribute('data-assistant-type')) return;
+        if (body.getAttribute('data-assistant-type') === 'general') return;
 
         var meta = document.querySelector('meta[name="viewport"]');
         if (meta) {
