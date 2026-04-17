@@ -5,7 +5,7 @@
     function init() {
         if (window.innerWidth > 768) return;
         var body = document.body;
-        if (!body || body.classList.contains('home') || !body.hasAttribute('data-assistant-type')) return;
+        if (!body || body.classList.contains('home') || body.classList.contains('error404') || !body.hasAttribute('data-assistant-type')) return;
         if (body.getAttribute('data-assistant-type') === 'general') return;
 
         var meta = document.querySelector('meta[name="viewport"]');
