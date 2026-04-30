@@ -286,6 +286,10 @@
       { label: 'Full-Time Employees', value: String(sub.fullTimeEmployees || sub.full_time_employees || sub.employees || '0') },
       { label: 'Part-Time Employees', value: String(sub.partTimeEmployees || sub.part_time_employees || '0') }
     ]);
+    b.drawFieldRow([
+      { label: 'Annual Payroll', value: formatMoney(sub.annualPayroll || sub.annual_payroll) },
+      { label: 'Owner Date of Birth', value: sub.ownerDob || sub.owner_dob || 'Not provided' }
+    ]);
 
     b.drawDivider();
 
@@ -294,7 +298,7 @@
     b.drawField('Location Address', premAddr);
     b.drawFieldRow([
       { label: 'Interest', value: sub.premisesOwnership || sub.premises_ownership || 'N/A' },
-      { label: 'Square Footage', value: sub.premisesSqFt ? sub.premisesSqFt + ' sq ft' : 'N/A' }
+      { label: 'Square Footage', value: (sub.premisesSqFt || sub.premises_sqft) ? (sub.premisesSqFt || sub.premises_sqft) + ' sq ft' : 'N/A' }
     ]);
 
     b.drawDivider();
@@ -323,13 +327,14 @@
 
     // Prior insurance
     b.drawSectionHeader('PRIOR INSURANCE');
-    if (sub.priorCarrier || sub.prior_carrier) {
+    var priorCarrier = sub.priorCarrier || sub.prior_carrier || sub.prior_carrier_name || '';
+    if (priorCarrier && priorCarrier.toLowerCase() !== 'none' && priorCarrier.toLowerCase() !== 'n/a') {
       b.drawFieldRow([
-        { label: 'Prior Carrier', value: sub.priorCarrier || sub.prior_carrier || '' },
+        { label: 'Prior Carrier', value: priorCarrier },
         { label: 'Policy Number', value: sub.priorPolicyNumber || sub.prior_policy_number || 'N/A' }
       ]);
       b.drawFieldRow([
-        { label: 'Expiration Date', value: sub.priorExpirationDate ? formatDate(sub.priorExpirationDate) : 'N/A' },
+        { label: 'Expiration Date', value: formatDate(sub.priorExpirationDate || sub.prior_policy_expiration || '') || 'N/A' },
         { label: 'Annual Premium', value: formatMoney(sub.priorPremium || sub.prior_premium) }
       ]);
     } else {
@@ -340,7 +345,11 @@
 
     // Claims
     b.drawSectionHeader('LOSS / CLAIMS HISTORY');
-    if (sub.hasClaimsHistory && sub.claimsDescription) {
+    var claimsVal = sub.claimsHistory || sub.claims_history || '';
+    if (claimsVal && claimsVal.toLowerCase().indexOf('no') < 0 && claimsVal !== '') {
+      b.drawField('Claims History', claimsVal);
+      if (sub.claimsDescription) b.drawField('Description', sub.claimsDescription);
+    } else if (sub.hasClaimsHistory && sub.claimsDescription) {
       b.drawField('Claims History', sub.claimsDescription);
     } else {
       b.drawInfoBox('[X] No prior losses or claims reported in the past 5 years');
